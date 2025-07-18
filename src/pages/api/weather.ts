@@ -6,6 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { city, lat, lon } = req.query;
 
   if (!API_KEY) {
+    console.error("Missing API key"); 
     return res.status(500).json({ error: 'API key not configured.' });
   }
 
@@ -27,11 +28,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const data = await response.json();
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(
+        `OpenWeatherMap error: ${response.status} - ${errorBody}`
+      );
       return res.status(response.status).json({ error: data.message || 'Failed to fetch weather data.' });
     }
 
     return res.status(200).json(data);
   } catch (error: unknown) {
+    console.error("Unexpected error in /api/weather:", error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

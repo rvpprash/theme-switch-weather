@@ -16,10 +16,10 @@ interface ThemeContextProps {
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
-    const storedTheme = (localStorage.getItem("theme") as Theme) || "light";
+    const storedTheme = (localStorage.getItem("theme") as Theme) || "dark";
     setTheme(storedTheme);
     document.documentElement.classList.toggle("dark", storedTheme === "dark");
   }, []);
