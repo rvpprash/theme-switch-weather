@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import fetchWithTimeout from '@/utils/fetchWithTimeout';
+
 const API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -24,17 +26,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response = await fetch(url);
-    const data = await response.json();
-
+    const response = await fetchWithTimeout(url,{},8000);
+   
+    const text = await response.text();
     if (!response.ok) {
-      const errorBody = await response.text();
       console.error(
-        `OpenWeatherMap error: ${response.status} - ${errorBody}`
+        `OpenWeatherMap error: ${response.status} - ${text}`
       );
-      return res.status(response.status).json({ error: data.message || 'Failed to fetch weather data.' });
-    }
+      let errorMessage = 'Failed to fetch weather data.';
 
+      if (text && text.startsWith('{')) {
+        const errorData = JSON.parse(text);
+        errorMessage = errorData.message || errorMessage;
+      }
+      return res.status(response.status).json({ error: errorMessage });
+    }
+    const data = JSON.parse(text);
     return res.status(200).json(data);
   } catch (error: unknown) {
     console.error("Unexpected error in /api/weather:", error);
