@@ -46,8 +46,12 @@ export default function Weather() {
           const json = await res.json();
           if (!res.ok) throw new Error(json.error || "Failed to fetch");
           setData(json);
-        } catch (err: any) {
-          setError(err.message);
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            setError(err.message);
+          } else {
+            throw err;
+          }
         } finally {
           setLoading(false);
         }
@@ -68,8 +72,12 @@ export default function Weather() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "City not found");
       setData(json);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        throw err;
+      }
     } finally {
       setLoading(false);
     }

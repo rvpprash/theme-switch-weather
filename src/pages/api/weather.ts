@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     return res.status(200).json(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
