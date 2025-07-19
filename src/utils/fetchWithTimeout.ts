@@ -1,7 +1,7 @@
 export default async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
-  timeout = 10000 // 10 second default
+  timeout = 10000
 ): Promise<Response> {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
@@ -12,8 +12,8 @@ export default async function fetchWithTimeout(
       signal: controller.signal,
     });
     return res;
-  } catch (err) {
-    if ((err as any).name === "AbortError") {
+  } catch (err: unknown) {
+    if (err instanceof Error && err.name === "AbortError") {
       console.error("fetchWithTimeout error: Request timed out");
     } else {
       console.error("fetchWithTimeout error:", err);
