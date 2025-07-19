@@ -42,7 +42,6 @@ export default async function handler(
   // const cachedData = weatherCache.get(cacheKey);
 
   const cachedData = await redis.get(cacheKey);
-  console.log("cachedData: ", cachedData);
 
   // if (cachedData && Date.now() - cachedData.timestamp < CACHE_TTL) {
 
